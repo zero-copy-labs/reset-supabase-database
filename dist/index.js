@@ -32947,9 +32947,22 @@ where n.nspname = 'public'
 GROUP BY nums.enum_name
 ;
 `;
+var publicFunctions = `SELECT
+    routine_name
+FROM 
+    information_schema.routines
+WHERE 
+    routine_type = 'FUNCTION'
+AND
+    routine_schema = 'public';
+`;
 async function dropView(name, c) {
   core.info(`Drop View: ${name}`);
   return c.query(`DROP VIEW IF EXISTS "${name}" CASCADE;`);
+}
+async function dropFunction(name, c) {
+  core.info(`Drop Function: ${name}`);
+  return c.query(`DROP FUNCTION IF EXISTS "${name}" CASCADE;`);
 }
 async function dropTable(name, c) {
   core.info(`Drop Table: ${name}`);
@@ -32982,7 +32995,11 @@ async function run() {
   });
   const { rows: nums } = await c.query(enums);
   await forEachSeries_default(nums, async (num) => {
-    return dropType(num, c);
+    return dropType(num.enum_name, c);
+  });
+  const { rows: funcs } = await c.query(publicFunctions);
+  await forEachSeries_default(funcs, async (func) => {
+    return dropFunction(func.routine_name, c);
   });
   await forEachSeries_default(users, async (user) => {
     return deleteUser(user, c);

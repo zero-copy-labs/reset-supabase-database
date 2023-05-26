@@ -24,11 +24,26 @@ where n.nspname = 'public'
 GROUP BY nums.enum_name
 ;
 `
+const publicFunctions = `SELECT
+    routine_name
+FROM 
+    information_schema.routines
+WHERE 
+    routine_type = 'FUNCTION'
+AND
+    routine_schema = 'public';
+`
 
 async function dropView(name, c) {
 	core.info(`Drop View: ${name}`);
 
 	return c.query(`DROP VIEW IF EXISTS "${name}" CASCADE;`)
+}
+
+async function dropFunction(name, c) {
+	core.info(`Drop Function: ${name}`);
+
+	return c.query(`DROP FUNCTION IF EXISTS "${name}" CASCADE;`)
 }
 
 async function dropTable(name, c) {
@@ -76,7 +91,15 @@ async function run() {
 	
 	// Delete all the included enums 
 	await forEachSeries(nums, async (num) => {
-		return dropType(num, c);
+		return dropType(num.enum_name, c);
+	})
+
+	// Find all Functions in the public schema
+	const { rows: funcs }= await c.query(publicFunctions)
+	
+	// Delete all the included functions 
+	await forEachSeries(funcs, async (func) => {
+		return dropFunction(func.routine_name, c);
 	})
 
 	// Delete all the included users
