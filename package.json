@@ -23,12 +23,14 @@
     "lint-staged": "^10.5.4",
     "lodash-es": "^4.17.21",
     "markdown-table": "^2.0.0",
+    "microbundle": "^0.15.1",
     "outdent": "^0.7.1",
     "rollup": "^2.55.1",
     "rollup-plugin-esbuild": "^4.5.0",
     "rollup-plugin-terser": "^7.0.2"
   },
   "scripts": {
-    "build": "rollup -c && :"
+    "build": "rollup -c && :",
+    "bundle": "esbuild index.mjs --bundle --platform=node --target=node16 --outdir=dist"
   }
 }
