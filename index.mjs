@@ -12,6 +12,19 @@ SELECT table_name, table_type FROM information_schema.tables
 WHERE table_schema = 'public';
 `
 
+const enums = `select nums.enum_name from (
+select n.nspname as enum_schema,  
+       t.typname as enum_name,  
+       e.enumlabel as enum_value
+from pg_type t 
+   join pg_enum e on t.oid = e.enumtypid  
+   join pg_catalog.pg_namespace n ON n.oid = t.typnamespace
+where n.nspname = 'public'
+) as nums
+GROUP BY nums.enum_name
+;
+`
+
 async function dropView(name, c) {
 	core.info(`Drop View: ${name}`);
 
@@ -22,6 +35,12 @@ async function dropTable(name, c) {
 	core.info(`Drop Table: ${name}`);
 
 	return c.query(`DROP TABLE IF EXISTS "${name}" CASCADE;`)
+}
+
+async function dropType(name, c) {
+	core.info(`Drop Type : ${name}`);
+
+	return c.query(`DROP TYPE IF EXISTS "${name}" CASCADE;`)
 }
 
 async function deleteUser(email, c) {
@@ -50,6 +69,14 @@ async function run() {
 			return dropView(table.table_name, c);
 		}
 		return dropTable(table.table_name, c);
+	})
+
+	// Find all Enums  in the public schema
+	const { rows: nums }= await c.query(enums)
+	
+	// Delete all the included enums 
+	await forEachSeries(nums, async (num) => {
+		return dropType(num, c);
 	})
 
 	// Delete all the included users

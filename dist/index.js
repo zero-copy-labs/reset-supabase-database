@@ -32935,6 +32935,18 @@ var tablesAndViews = `
 SELECT table_name, table_type FROM information_schema.tables 
 WHERE table_schema = 'public';
 `;
+var enums = `select nums.enum_name from (
+select n.nspname as enum_schema,  
+       t.typname as enum_name,  
+       e.enumlabel as enum_value
+from pg_type t 
+   join pg_enum e on t.oid = e.enumtypid  
+   join pg_catalog.pg_namespace n ON n.oid = t.typnamespace
+where n.nspname = 'public'
+) as nums
+GROUP BY nums.enum_name
+;
+`;
 async function dropView(name, c) {
   core.info(`Drop View: ${name}`);
   return c.query(`DROP VIEW IF EXISTS "${name}" CASCADE;`);
@@ -32942,6 +32954,10 @@ async function dropView(name, c) {
 async function dropTable(name, c) {
   core.info(`Drop Table: ${name}`);
   return c.query(`DROP TABLE IF EXISTS "${name}" CASCADE;`);
+}
+async function dropType(name, c) {
+  core.info(`Drop Type : ${name}`);
+  return c.query(`DROP TYPE IF EXISTS "${name}" CASCADE;`);
 }
 async function deleteUser(email, c) {
   core.info(`Delete User : ${email}`);
@@ -32963,6 +32979,10 @@ async function run() {
       return dropView(table.table_name, c);
     }
     return dropTable(table.table_name, c);
+  });
+  const { rows: nums } = await c.query(enums);
+  await forEachSeries_default(nums, async (num) => {
+    return dropType(num, c);
   });
   await forEachSeries_default(users, async (user) => {
     return deleteUser(user, c);
