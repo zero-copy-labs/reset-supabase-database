@@ -31484,11 +31484,23 @@ var import_nanoassert12 = __toModule(require_nanoassert());
 // index.mjs
 var pg = __toModule(require_lib5());
 var { Client } = pg;
+var TerminateDbSqlFmt = `
+SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'postgres';
+-- Wait for WAL sender to drop replication slot.
+DO 'BEGIN WHILE (
+	SELECT COUNT(*) FROM pg_replication_slots WHERE database = ''postgres''
+) > 0 LOOP END LOOP; END';`;
 async function run() {
   const client = new Client({
     connectionString: core.getInput("connectionString")
   });
   await client.connect();
+  const resD = await client.query("ALTER DATABASE postgres ALLOW_CONNECTIONS false;");
+  core.info(`Disconnect Result: ${resD.rows[0].message}`);
+  console.log(resD.rows[0].message);
+  const resDD = await client.query(TerminateDbSqlFmt);
+  core.info(`Terminate Result: ${resDD.rows[0].message}`);
+  console.log(resDD.rows[0].message);
   const res = await client.query("DROP DATABASE IF EXISTS postgres WITH (FORCE);");
   core.info(`Drop Result: ${res.rows[0].message}`);
   console.log(res.rows[0].message);
