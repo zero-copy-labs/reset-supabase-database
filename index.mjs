@@ -4,7 +4,8 @@ import { to } from 'await-to-js';
 import _ from 'lodash';
 import axios from "axios";
 import { mapSeries } from 'modern-async';
-const { Client } = require('pg');
+import * as pg from 'pg'
+const { Client } = pg;
 
 
 async function run() {

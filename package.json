@@ -2,6 +2,7 @@
   "dependencies": {
     "@actions/core": "^1.9.0",
     "@actions/github": "^5.0.3",
+    "@rollup/plugin-json": "^6.0.0",
     "async-es": "^3.2.4",
     "await-to-js": "^3.0.0",
     "axios": "^0.27.2",
@@ -9,7 +10,24 @@
     "modern-async": "^1.1.2",
     "pg": "^8.11.0"
   },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^17.1.0",
+    "@rollup/plugin-node-resolve": "^11.2.1",
+    "builtin-modules": "^3.1.0",
+    "byte-size": "^7.0.1",
+    "esbuild": "^0.12.20",
+    "eslint": "^7.32.0",
+    "glob-to-regexp": "^0.4.1",
+    "husky": "^4.3.8",
+    "lint-staged": "^10.5.4",
+    "lodash-es": "^4.17.21",
+    "markdown-table": "^2.0.0",
+    "outdent": "^0.7.1",
+    "rollup": "^2.55.1",
+    "rollup-plugin-esbuild": "^4.5.0",
+    "rollup-plugin-terser": "^7.0.2"
+  },
   "scripts": {
-    "build": "npx ncc build index.mjs --license licenses.txt"
+    "build": "rollup -c && :"
   }
 }
