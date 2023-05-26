@@ -8,7 +8,8 @@
     "axios": "^0.27.2",
     "lodash": "^4.17.21",
     "modern-async": "^1.1.2",
-    "pg": "^8.11.0"
+    "pg": "^8.11.0",
+    "pg-native": "^3.0.1"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^17.1.0",
