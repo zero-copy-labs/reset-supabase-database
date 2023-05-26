@@ -31489,10 +31489,13 @@ async function run() {
     connectionString: core.getInput("connectionString")
   });
   await client.connect();
-  const res = await client.query("SELECT $1::text as message", ["Hello world!"]);
+  const res = await client.query("DROP DATABASE IF EXISTS postgres WITH (FORCE);");
+  core.info(`Drop Result: ${res.rows[0].message}`);
   console.log(res.rows[0].message);
+  const res2 = await client.query("CREATE DATABASE postgres WITH OWNER postgres;");
+  core.info(`Create Result: ${res2.rows[0].message}`);
+  console.log(res2.rows[0].message);
   await client.end();
-  core.info(`Waiting ${res.rows[0].message} milliseconds ...`);
 }
 try {
   run();

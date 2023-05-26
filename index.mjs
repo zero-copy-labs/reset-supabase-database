@@ -14,12 +14,21 @@ async function run() {
 	});
 	await client.connect()
 
-	const res = await client.query('SELECT $1::text as message', ['Hello world!'])
-	console.log(res.rows[0].message) // Hello world!
+	// Drop the database
+	const res = await client.query('DROP DATABASE IF EXISTS postgres WITH (FORCE);')
+	core.info(`Drop Result: ${res.rows[0].message}`);
+	console.log(res.rows[0].message)
+
+
+	// Create the database
+	const res2 = await client.query('CREATE DATABASE postgres WITH OWNER postgres;')
+	core.info(`Create Result: ${res2.rows[0].message}`);
+	console.log(res2.rows[0].message)
+	
+
 	await client.end()
 
 
-	core.info(`Waiting ${res.rows[0].message} milliseconds ...`);
 /*
 	core.debug((new Date()).toTimeString()); // debug is only output if you set the secret `ACTIONS_RUNNER_DEBUG` to true
 	await wait(parseInt(ms));
