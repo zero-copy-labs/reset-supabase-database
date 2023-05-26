@@ -4,8 +4,10 @@ import { to } from 'await-to-js';
 import _ from 'lodash';
 import axios from "axios";
 import { mapSeries } from 'modern-async';
-import * as pg from 'pg'
-const { Client } = pg;
+import * as pg from 'pg';
+const { Client } = pg.default;
+console.log(Client);
+console.log(pg);
 
 const TerminateDbSqlFmt = `
 SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'postgres';
@@ -17,28 +19,28 @@ DO 'BEGIN WHILE (
 const SetRole = `SET ROLE postgres;`
 
 async function run() {
-	const client = new Client({
+	const c = new Client({
 		connectionString: core.getInput('connectionString'),
 	});
-	await client.connect()
+	await c.connect()
 	
 	// Disconnect clients
-	const resD = await client.query('ALTER DATABASE postgres ALLOW_CONNECTIONS false;')
+	const resD = await c.query('ALTER DATABASE postgres ALLOW_CONNECTIONS false;')
 	core.info(`Disconnect Result: ${resD.rows[0].message}`);
 	console.log(resD.rows[0].message)
 
 	// Terminate connections 
-	const resDD = await client.query(TerminateDbSqlFmt)
+	const resDD = await c.query(TerminateDbSqlFmt)
 	core.info(`Terminate Result: ${resDD.rows[0].message}`);
 	console.log(resDD.rows[0].message)
 
 	// Drop the database
-	const res = await client.query('DROP DATABASE IF EXISTS postgres WITH (FORCE);')
+	const res = await c.query('DROP DATABASE IF EXISTS postgres WITH (FORCE);')
 	core.info(`Drop Result: ${res.rows[0].message}`);
 	console.log(res.rows[0].message)
 
 	// Create the database
-	const res2 = await client.query('CREATE DATABASE postgres WITH OWNER postgres;')
+	const res2 = await c.query('CREATE DATABASE postgres WITH OWNER postgres;')
 	core.info(`Create Result: ${res2.rows[0].message}`);
 	console.log(res2.rows[0].message)
 	
@@ -47,7 +49,7 @@ async function run() {
 	// Initial Schema
 	// SET_POSTGRES_ROLE
 
-	await client.end()
+	await c.end()
 
 
 /*
