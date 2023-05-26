@@ -32967,6 +32967,7 @@ async function run() {
   await forEachSeries_default(users, async (user) => {
     return deleteUser(user, c);
   });
+  await c.query(`TRUNCATE "supabase_migrations"."schema_migrations";`);
   await c.end();
 }
 try {

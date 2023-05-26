@@ -56,6 +56,9 @@ async function run() {
 	await forEachSeries(users, async (user) => {
 		return deleteUser(user, c);
 	})
+
+	// Clear the migrations table
+	await c.query(`TRUNCATE "supabase_migrations"."schema_migrations";`)
 	
 	await c.end()
 }
