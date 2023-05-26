@@ -4,6 +4,9 @@ inputs:
   connectionString:  # id of input
     description: 'e.g. postgres://user:password@host:5432/database'
     required: true
+  users:  # id of input
+    description: 'List if user emails to delete e.g. test@test.com,test2@test.com'
+    required: true
 runs:
   using: 'node16'
   main: 'dist/index.js'
