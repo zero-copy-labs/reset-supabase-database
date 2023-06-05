@@ -32982,8 +32982,20 @@ async function deleteUser(email, c) {
   core.info(`Delete User: ${email} not found, skipping...`);
   return true;
 }
+async function deleteBucket(id, c) {
+  core.info(`Delete Bucket: ${id}`);
+  const u = await c.query(`SELECT id FROM "storage"."buckets" WHERE id = '${id}';`);
+  if (u.rows.length > 0) {
+    core.info(`Found Bucket: ${id} deleting...`);
+    await c.query(`DELETE FROM "storage"."objects" WHERE bucket_id = '${id}';`);
+    return c.query(`DELETE FROM "storage"."buckets" WHERE id = '${id}';`);
+  }
+  core.info(`Delete Bucket: ${id} not found, skipping...`);
+  return true;
+}
 async function run() {
   const users = core.getInput("users").split(",");
+  const buckets = core.getInput("buckets").split(",");
   const c = new Client({
     connectionString: core.getInput("connectionString")
   });
@@ -33007,6 +33019,9 @@ async function run() {
     return deleteUser(user, c);
   });
   await c.query(`TRUNCATE "supabase_migrations"."schema_migrations";`);
+  await forEachSeries_default(buckets, async (bucket) => {
+    return deleteBucket(bucket, c);
+  });
   await c.end();
 }
 try {

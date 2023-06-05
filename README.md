@@ -8,7 +8,11 @@
 
 ### `users`
 
-**Required** e.g. `user@test.com,user2@test.com`.
+e.g. `user@test.com,user2@test.com`.
+
+### `buckets`
+
+e.g. `public,content`.
 
 ## Example usage
 
@@ -17,4 +21,5 @@ uses: zero-copy-labs/reset-supabase-database@main
 with:
   connectionString: 'postgres://user:password@host:5432/database'
   users: 'user@test.com,user2@test.com'
+  buckets: 'public,content'
 ```
