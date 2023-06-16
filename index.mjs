@@ -21,8 +21,7 @@ from pg_type t
    join pg_catalog.pg_namespace n ON n.oid = t.typnamespace
 where n.nspname = 'public'
 ) as nums
-GROUP BY nums.enum_name
-;
+GROUP BY nums.enum_name;
 `
 const publicFunctions = `SELECT
     routine_name
@@ -33,6 +32,14 @@ WHERE
 AND
     routine_schema = 'public';
 `
+
+const polices = `SELECT * FROM pg_policies;`
+
+async function dropPolicy(schema, table, name, c) {
+	core.info(`Drop Policy: ${name} ON ${schema}.${table}`);
+
+	return c.query(`DROP POLICY IF EXISTS "${name}" ON "${schema}"."${table}" CASCADE;`)
+}
 
 async function dropView(name, c) {
 	core.info(`Drop View: ${name}`);
@@ -130,6 +137,14 @@ async function run() {
 	// Clear out the buckets
 	await forEachSeries(buckets, async (bucket) => {
 		return deleteBucket(bucket, c);
+	})
+
+	// Find all polices 
+	const { rows: policyList }= await c.query(polices)
+
+	// Delete polices 
+	await forEachSeries(policyList, async (p) => {
+		return dropPolicy(p.schemaname, p.tablename, p.policyname, c);
 	})
 	
 	await c.end()

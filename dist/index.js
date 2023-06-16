@@ -32944,8 +32944,7 @@ from pg_type t
    join pg_catalog.pg_namespace n ON n.oid = t.typnamespace
 where n.nspname = 'public'
 ) as nums
-GROUP BY nums.enum_name
-;
+GROUP BY nums.enum_name;
 `;
 var publicFunctions = `SELECT
     routine_name
@@ -32956,6 +32955,11 @@ WHERE
 AND
     routine_schema = 'public';
 `;
+var polices = `SELECT * FROM pg_policies;`;
+async function dropPolicy(schema, table, name, c) {
+  core.info(`Drop Policy: ${name} ON ${schema}.${table}`);
+  return c.query(`DROP POLICY IF EXISTS "${name}" ON "${schema}"."${table}" CASCADE;`);
+}
 async function dropView(name, c) {
   core.info(`Drop View: ${name}`);
   return c.query(`DROP VIEW IF EXISTS "${name}" CASCADE;`);
@@ -33021,6 +33025,10 @@ async function run() {
   await c.query(`TRUNCATE "supabase_migrations"."schema_migrations";`);
   await forEachSeries_default(buckets, async (bucket) => {
     return deleteBucket(bucket, c);
+  });
+  const { rows: policyList } = await c.query(polices);
+  await forEachSeries_default(policyList, async (p) => {
+    return dropPolicy(p.schemaname, p.tablename, p.policyname, c);
   });
   await c.end();
 }
