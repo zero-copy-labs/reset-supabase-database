@@ -33019,9 +33019,6 @@ async function run() {
   await forEachSeries_default(funcs, async (func) => {
     return dropFunction(func.routine_name, c);
   });
-  await forEachSeries_default(users, async (user) => {
-    return deleteUser(user, c);
-  });
   await c.query(`TRUNCATE "supabase_migrations"."schema_migrations";`);
   await forEachSeries_default(buckets, async (bucket) => {
     return deleteBucket(bucket, c);
@@ -33029,6 +33026,9 @@ async function run() {
   const { rows: policyList } = await c.query(polices);
   await forEachSeries_default(policyList, async (p) => {
     return dropPolicy(p.schemaname, p.tablename, p.policyname, c);
+  });
+  await forEachSeries_default(users, async (user) => {
+    return deleteUser(user, c);
   });
   await c.end();
 }

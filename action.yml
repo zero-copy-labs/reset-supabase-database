@@ -6,7 +6,10 @@ inputs:
     required: true
   users:  # id of input
     description: 'List if user emails to delete e.g. test@test.com,test2@test.com'
-    required: true
+    required: false 
+  buckets:  # id of input
+    description: 'List of buckets to delete e.g. public,content'
+    required: false 
 runs:
   using: 'node16'
   main: 'dist/index.js'

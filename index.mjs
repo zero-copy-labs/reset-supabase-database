@@ -126,11 +126,6 @@ async function run() {
 		return dropFunction(func.routine_name, c);
 	})
 
-	// Delete all the included users
-	await forEachSeries(users, async (user) => {
-		return deleteUser(user, c);
-	})
-
 	// Clear the migrations table
 	await c.query(`TRUNCATE "supabase_migrations"."schema_migrations";`)
 
@@ -146,6 +141,12 @@ async function run() {
 	await forEachSeries(policyList, async (p) => {
 		return dropPolicy(p.schemaname, p.tablename, p.policyname, c);
 	})
+
+	// Delete all the included users
+	await forEachSeries(users, async (user) => {
+		return deleteUser(user, c);
+	})
+
 	
 	await c.end()
 }
