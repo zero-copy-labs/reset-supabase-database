@@ -14,6 +14,10 @@ e.g. `user@test.com,user2@test.com`.
 
 e.g. `public,content`.
 
+### `extensions`
+
+e.g. `content-lib,welcome`.
+
 ## Example usage
 
 ```yaml
@@ -22,4 +26,5 @@ with:
   connectionString: 'postgres://user:password@host:5432/database'
   users: 'user@test.com,user2@test.com'
   buckets: 'public,content'
+  extensions: 'content-lib,welcome'
 ```
