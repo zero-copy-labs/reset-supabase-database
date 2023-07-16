@@ -10,6 +10,9 @@ inputs:
   buckets:  # id of input
     description: 'List of buckets to delete e.g. public,content'
     required: false 
+  extensions:  # id of input
+    description: 'List of extensions to disable e.g. content-lib,welcome'
+    required: false 
 runs:
   using: 'node16'
   main: 'dist/index.js'
