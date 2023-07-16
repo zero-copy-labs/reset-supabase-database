@@ -3,9 +3,7 @@
     "@actions/core": "^1.9.0",
     "@actions/github": "^5.0.3",
     "async-es": "^3.2.4",
-    "await-to-js": "^3.0.0",
     "axios": "^0.27.2",
-    "lodash": "^4.17.21",
     "modern-async": "^1.1.2",
     "pg": "^8.11.0",
     "pg-native": "^3.0.1"
