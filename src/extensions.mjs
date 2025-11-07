@@ -4,7 +4,7 @@ import { forEachSeries } from 'modern-async';
 async function disableExtension(ext, c) {
     core.info(`Disable extension : ${ext}`);
 
-    await c.query(`DROP EXTENSION IF EXISTS ${ext};`)
+    await c.query(`DROP EXTENSION IF EXISTS ${ext} CASCADE;`)
 
     return true;
 }

@@ -15301,7 +15301,7 @@ async function run7(users, c) {
 var core8 = __toModule(require_core());
 async function disableExtension(ext, c) {
   core8.info(`Disable extension : ${ext}`);
-  await c.query(`DROP EXTENSION IF EXISTS ${ext};`);
+  await c.query(`DROP EXTENSION IF EXISTS ${ext} CASCADE;`);
   return true;
 }
 async function run8(extensions, c) {
