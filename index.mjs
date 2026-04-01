@@ -11,11 +11,13 @@ import runBuckets from './src/buckets.mjs';
 import runPolicies from './src/policies.mjs';
 import runUsers from './src/users.mjs';
 import runExtensions from './src/extensions.mjs';
+import runSchemas from './src/schemas.mjs';
 
 async function run() {
 	const users = core.getInput('users').split(',');
 	const buckets = core.getInput('buckets').split(',');
 	const extensions = core.getInput('extensions').split(',');
+	const schemas = core.getInput('schemas').split(',');
 
 	const c = new Client({
 		connectionString: core.getInput('connectionString'),
@@ -45,6 +47,9 @@ async function run() {
 
 	// Delete all the included users
 	await runUsers(users, c);
+
+	// Drop additional schemas
+	await runSchemas(schemas, c);
 
 	await c.end()
 }

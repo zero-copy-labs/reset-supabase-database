@@ -12,7 +12,10 @@ inputs:
     required: false 
   extensions:  # id of input
     description: 'List of extensions to disable e.g. content-lib,welcome'
-    required: false 
+    required: false
+  schemas:  # id of input
+    description: 'List of additional schemas to drop e.g. audit,custom'
+    required: false
 runs:
   using: 'node16'
   main: 'dist/index.js'

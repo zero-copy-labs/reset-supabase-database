@@ -1265,12 +1265,12 @@ var require_lib = __commonJS({
             throw new Error("Client has already been disposed.");
           }
           const parsedUrl = new URL(requestUrl);
-          let info9 = this._prepareRequest(verb, parsedUrl, headers);
+          let info10 = this._prepareRequest(verb, parsedUrl, headers);
           const maxTries = this._allowRetries && RetryableHttpVerbs.includes(verb) ? this._maxRetries + 1 : 1;
           let numTries = 0;
           let response;
           do {
-            response = yield this.requestRaw(info9, data);
+            response = yield this.requestRaw(info10, data);
             if (response && response.message && response.message.statusCode === HttpCodes.Unauthorized) {
               let authenticationHandler;
               for (const handler of this.handlers) {
@@ -1280,7 +1280,7 @@ var require_lib = __commonJS({
                 }
               }
               if (authenticationHandler) {
-                return authenticationHandler.handleAuthentication(this, info9, data);
+                return authenticationHandler.handleAuthentication(this, info10, data);
               } else {
                 return response;
               }
@@ -1303,8 +1303,8 @@ var require_lib = __commonJS({
                   }
                 }
               }
-              info9 = this._prepareRequest(verb, parsedRedirectUrl, headers);
-              response = yield this.requestRaw(info9, data);
+              info10 = this._prepareRequest(verb, parsedRedirectUrl, headers);
+              response = yield this.requestRaw(info10, data);
               redirectsRemaining--;
             }
             if (!response.message.statusCode || !HttpResponseRetryCodes.includes(response.message.statusCode)) {
@@ -1325,7 +1325,7 @@ var require_lib = __commonJS({
         }
         this._disposed = true;
       }
-      requestRaw(info9, data) {
+      requestRaw(info10, data) {
         return __awaiter(this, void 0, void 0, function* () {
           return new Promise((resolve, reject) => {
             function callbackForResult(err, res) {
@@ -1337,16 +1337,16 @@ var require_lib = __commonJS({
                 resolve(res);
               }
             }
-            this.requestRawWithCallback(info9, data, callbackForResult);
+            this.requestRawWithCallback(info10, data, callbackForResult);
           });
         });
       }
-      requestRawWithCallback(info9, data, onResult) {
+      requestRawWithCallback(info10, data, onResult) {
         if (typeof data === "string") {
-          if (!info9.options.headers) {
-            info9.options.headers = {};
+          if (!info10.options.headers) {
+            info10.options.headers = {};
           }
-          info9.options.headers["Content-Length"] = Buffer.byteLength(data, "utf8");
+          info10.options.headers["Content-Length"] = Buffer.byteLength(data, "utf8");
         }
         let callbackCalled = false;
         function handleResult(err, res) {
@@ -1355,7 +1355,7 @@ var require_lib = __commonJS({
             onResult(err, res);
           }
         }
-        const req = info9.httpModule.request(info9.options, (msg) => {
+        const req = info10.httpModule.request(info10.options, (msg) => {
           const res = new HttpClientResponse(msg);
           handleResult(void 0, res);
         });
@@ -1367,7 +1367,7 @@ var require_lib = __commonJS({
           if (socket) {
             socket.end();
           }
-          handleResult(new Error(`Request timeout: ${info9.options.path}`));
+          handleResult(new Error(`Request timeout: ${info10.options.path}`));
         });
         req.on("error", function(err) {
           handleResult(err);
@@ -1389,27 +1389,27 @@ var require_lib = __commonJS({
         return this._getAgent(parsedUrl);
       }
       _prepareRequest(method, requestUrl, headers) {
-        const info9 = {};
-        info9.parsedUrl = requestUrl;
-        const usingSsl = info9.parsedUrl.protocol === "https:";
-        info9.httpModule = usingSsl ? https : http;
+        const info10 = {};
+        info10.parsedUrl = requestUrl;
+        const usingSsl = info10.parsedUrl.protocol === "https:";
+        info10.httpModule = usingSsl ? https : http;
         const defaultPort = usingSsl ? 443 : 80;
-        info9.options = {};
-        info9.options.host = info9.parsedUrl.hostname;
-        info9.options.port = info9.parsedUrl.port ? parseInt(info9.parsedUrl.port) : defaultPort;
-        info9.options.path = (info9.parsedUrl.pathname || "") + (info9.parsedUrl.search || "");
-        info9.options.method = method;
-        info9.options.headers = this._mergeHeaders(headers);
+        info10.options = {};
+        info10.options.host = info10.parsedUrl.hostname;
+        info10.options.port = info10.parsedUrl.port ? parseInt(info10.parsedUrl.port) : defaultPort;
+        info10.options.path = (info10.parsedUrl.pathname || "") + (info10.parsedUrl.search || "");
+        info10.options.method = method;
+        info10.options.headers = this._mergeHeaders(headers);
         if (this.userAgent != null) {
-          info9.options.headers["user-agent"] = this.userAgent;
+          info10.options.headers["user-agent"] = this.userAgent;
         }
-        info9.options.agent = this._getAgent(info9.parsedUrl);
+        info10.options.agent = this._getAgent(info10.parsedUrl);
         if (this.handlers) {
           for (const handler of this.handlers) {
-            handler.prepareRequest(info9.options);
+            handler.prepareRequest(info10.options);
           }
         }
-        return info9;
+        return info10;
       }
       _mergeHeaders(headers) {
         if (this.requestOptions && this.requestOptions.headers) {
@@ -2117,10 +2117,10 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
       command_1.issueCommand("notice", utils_1.toCommandProperties(properties), message instanceof Error ? message.toString() : message);
     }
     exports.notice = notice;
-    function info9(message) {
+    function info10(message) {
       process.stdout.write(message + os.EOL);
     }
-    exports.info = info9;
+    exports.info = info10;
     function startGroup(name) {
       command_1.issue("group", name);
     }
@@ -14544,7 +14544,7 @@ var require_task = __commonJS({
     fails(function() {
       $location = global2.location;
     });
-    var run10 = function(id) {
+    var run11 = function(id) {
       if (hasOwn(queue, id)) {
         var fn = queue[id];
         delete queue[id];
@@ -14553,11 +14553,11 @@ var require_task = __commonJS({
     };
     var runner = function(id) {
       return function() {
-        run10(id);
+        run11(id);
       };
     };
     var eventListener = function(event) {
-      run10(event.data);
+      run11(event.data);
     };
     var globalPostMessageDefer = function(id) {
       global2.postMessage(String2(id), $location.protocol + "//" + $location.host);
@@ -14596,7 +14596,7 @@ var require_task = __commonJS({
         defer = function(id) {
           html.appendChild(createElement("script"))[ONREADYSTATECHANGE] = function() {
             html.removeChild(this);
-            run10(id);
+            run11(id);
           };
         };
       } else {
@@ -14797,7 +14797,7 @@ var require_queue_microtask5 = __commonJS({
 });
 
 // index.mjs
-var core9 = __toModule(require_core());
+var core10 = __toModule(require_core());
 var github = __toModule(require_github());
 var pg = __toModule(require_lib5());
 
@@ -15310,14 +15310,28 @@ async function run8(extensions, c) {
   });
 }
 
+// src/schemas.mjs
+var core9 = __toModule(require_core());
+async function dropSchema(name, c) {
+  core9.info(`Drop Schema: ${name}`);
+  return c.query(`DROP SCHEMA IF EXISTS "${name}" CASCADE;`);
+}
+async function run9(schemas, c) {
+  const filtered = schemas.filter((s) => s && s.trim());
+  await forEachSeries_default(filtered, async (schema) => {
+    return dropSchema(schema.trim(), c);
+  });
+}
+
 // index.mjs
 var { Client } = pg.default;
-async function run9() {
-  const users = core9.getInput("users").split(",");
-  const buckets = core9.getInput("buckets").split(",");
-  const extensions = core9.getInput("extensions").split(",");
+async function run10() {
+  const users = core10.getInput("users").split(",");
+  const buckets = core10.getInput("buckets").split(",");
+  const extensions = core10.getInput("extensions").split(",");
+  const schemas = core10.getInput("schemas").split(",");
   const c = new Client({
-    connectionString: core9.getInput("connectionString")
+    connectionString: core10.getInput("connectionString")
   });
   await c.connect();
   await run8(extensions, c);
@@ -15328,12 +15342,13 @@ async function run9() {
   await run5(buckets, c);
   await run6(c);
   await run7(users, c);
+  await run9(schemas, c);
   await c.end();
 }
 try {
-  run9();
+  run10();
 } catch (error) {
-  core9.setFailed(error.message);
+  core10.setFailed(error.message);
 }
 /*!
  * is-plain-object <https://github.com/jonschlinkert/is-plain-object>
