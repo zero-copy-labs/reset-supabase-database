@@ -18,6 +18,10 @@ e.g. `public,content`.
 
 e.g. `content-lib,welcome`.
 
+### `schemas`
+
+List of additional schemas to drop (with CASCADE) e.g. `audit,custom`.
+
 ## Example usage
 
 ```yaml
@@ -27,4 +31,5 @@ with:
   users: 'user@test.com,user2@test.com'
   buckets: 'public,content'
   extensions: 'content-lib,welcome'
+  schemas: 'audit,custom'
 ```
