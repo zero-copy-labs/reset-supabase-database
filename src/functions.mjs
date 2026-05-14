@@ -2,27 +2,30 @@ import * as core from '@actions/core';
 import { forEachSeries } from 'modern-async';
 
 const publicFunctions = `SELECT
-    routine_name
-FROM 
-    information_schema.routines
-WHERE 
-    routine_type = 'FUNCTION'
+    n.nspname AS schema_name,
+    p.proname AS function_name,
+    pg_get_function_identity_arguments(p.oid) AS args
+FROM
+    pg_proc p
+JOIN
+    pg_namespace n ON n.oid = p.pronamespace
+WHERE
+    n.nspname = 'public'
 AND
-    routine_schema = 'public';
+    p.prokind = 'f';
 `;
 
-async function dropFunction(name, c) {
-	core.info(`Drop Function: ${name}`);
+async function dropFunction(func, c) {
+	const signature = `"${func.schema_name}"."${func.function_name}"(${func.args})`;
+	core.info(`Drop Function: ${signature}`);
 
-	return c.query(`DROP FUNCTION IF EXISTS "${name}" CASCADE;`)
+	return c.query(`DROP FUNCTION IF EXISTS ${signature} CASCADE;`);
 }
 
 export default async function run(c) {
-	// Find all Functions in the public schema
-	const { rows: funcs }= await c.query(publicFunctions)
-	
-	// Delete all the included functions 
+	const { rows: funcs } = await c.query(publicFunctions);
+
 	await forEachSeries(funcs, async (func) => {
-		return dropFunction(func.routine_name, c);
-	})
+		return dropFunction(func, c);
+	});
 }
