@@ -16,6 +16,8 @@ import runSchemas from './src/schemas.mjs';
 async function run() {
 	const users = core.getInput('users').split(',');
 	const buckets = core.getInput('buckets').split(',');
+	const supabaseUrl = core.getInput('supabaseUrl');
+	const serviceRoleKey = core.getInput('serviceRoleKey');
 	const extensions = core.getInput('extensions').split(',');
 	const schemas = core.getInput('schemas').split(',');
 
@@ -40,7 +42,7 @@ async function run() {
 	await runMigrations(c);
 
 	// Clear out the buckets
-	await runBuckets(buckets, c);
+	await runBuckets(buckets, c, supabaseUrl, serviceRoleKey);
 
 	// Delete policies
 	await runPolicies(c);

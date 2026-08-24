@@ -9,7 +9,13 @@ inputs:
     required: false 
   buckets:  # id of input
     description: 'List of buckets to delete e.g. public,content'
-    required: false 
+    required: false
+  supabaseUrl:  # id of input
+    description: 'Supabase project URL, required to delete buckets via the Storage API e.g. https://xyz.supabase.co'
+    required: false
+  serviceRoleKey:  # id of input
+    description: 'Supabase service role key, required to delete buckets via the Storage API'
+    required: false
   extensions:  # id of input
     description: 'List of extensions to disable e.g. content-lib,welcome'
     required: false
