@@ -5,8 +5,12 @@ inputs:
     description: 'e.g. postgres://user:password@host:5432/database'
     required: true
   users:  # id of input
-    description: 'List if user emails to delete e.g. test@test.com,test2@test.com'
-    required: false 
+    description: 'List if user emails to delete e.g. test@test.com,test2@test.com. Ignored if deleteAllUsers is true.'
+    required: false
+  deleteAllUsers:  # id of input
+    description: 'If true, delete every row in auth.users instead of using the users list. For seed-managed environments with no real end users (dev/staging) — avoids auth.users accumulating orphaned rows (e.g. from NULL-email phone logins) that the named list can never target.'
+    required: false
+    default: 'false'
   buckets:  # id of input
     description: 'List of buckets to delete e.g. public,content'
     required: false

@@ -27652,7 +27652,26 @@ async function deleteUser(email, c) {
   core7.info(`Delete User: ${email} not found, skipping...`);
   return true;
 }
-async function run7(users, c) {
+async function deleteUserById(id, label, c) {
+  core7.info(`Found User : ${label} deleting...`);
+  return c.query(`DELETE FROM "auth"."users" WHERE id = $1;`, [id]);
+}
+async function deleteAllUsers(c) {
+  core7.info("Delete All Users: querying every row in auth.users...");
+  const { rows } = await c.query(`SELECT id, email, phone FROM "auth"."users";`);
+  if (rows.length === 0) {
+    core7.info("Delete All Users: no users found, skipping...");
+    return;
+  }
+  await forEachSeries_default(rows, async (row) => {
+    const label = row.email || row.phone || row.id;
+    return deleteUserById(row.id, label, c);
+  });
+}
+async function run7(users, c, allUsers = false) {
+  if (allUsers) {
+    return deleteAllUsers(c);
+  }
   await forEachSeries_default(users, async (user) => {
     return deleteUser(user, c);
   });
@@ -27688,6 +27707,7 @@ async function run9(schemas, c) {
 var { Client } = pg.default;
 async function run10() {
   const users = core10.getInput("users").split(",");
+  const deleteAllUsers2 = core10.getInput("deleteAllUsers") === "true";
   const buckets = core10.getInput("buckets").split(",");
   const supabaseUrl = core10.getInput("supabaseUrl");
   const serviceRoleKey = core10.getInput("serviceRoleKey");
@@ -27704,7 +27724,7 @@ async function run10() {
   await run4(c);
   await run5(buckets, c, supabaseUrl, serviceRoleKey);
   await run6(c);
-  await run7(users, c);
+  await run7(users, c, deleteAllUsers2);
   await run9(schemas, c);
   await c.end();
 }

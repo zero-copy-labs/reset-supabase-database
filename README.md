@@ -8,7 +8,21 @@
 
 ### `users`
 
-e.g. `user@test.com,user2@test.com`.
+e.g. `user@test.com,user2@test.com`. Ignored if `deleteAllUsers` is `true`.
+
+### `deleteAllUsers`
+
+`true` or `false` (default `false`). Deletes every row in `auth.users` instead of the
+named `users` list. Only `public`-schema tables reference `auth.users` by foreign key,
+and those are already dropped earlier in the reset, so this is safe once nothing else
+in the run still expects a `public` row pointing at a deleted user.
+
+Use this for seed-managed environments (dev, staging) where every auth user is
+recreated by the seed script and there are no real end users to preserve. The named
+`users` list can only delete rows that match a given email — an email-less row (e.g.
+a portal phone-only login, `auth.users.email IS NULL`) can never be targeted by it and
+will accumulate indefinitely across resets, which can later collide with a seed trying
+to assign that same phone number to a newly (re)created user.
 
 ### `buckets`
 

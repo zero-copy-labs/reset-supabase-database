@@ -15,6 +15,7 @@ import runSchemas from './src/schemas.mjs';
 
 async function run() {
 	const users = core.getInput('users').split(',');
+	const deleteAllUsers = core.getInput('deleteAllUsers') === 'true';
 	const buckets = core.getInput('buckets').split(',');
 	const supabaseUrl = core.getInput('supabaseUrl');
 	const serviceRoleKey = core.getInput('serviceRoleKey');
@@ -47,8 +48,8 @@ async function run() {
 	// Delete policies
 	await runPolicies(c);
 
-	// Delete all the included users
-	await runUsers(users, c);
+	// Delete all the included users (or every user, if deleteAllUsers is set)
+	await runUsers(users, c, deleteAllUsers);
 
 	// Drop additional schemas
 	await runSchemas(schemas, c);
